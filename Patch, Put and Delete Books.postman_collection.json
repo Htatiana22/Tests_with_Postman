@@ -1,0 +1,223 @@
+{
+	"info": {
+		"_postman_id": "1adf65f1-8b8e-458f-96b8-871009a83002",
+		"name": "Patch, Put and Delete Books",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8476652"
+	},
+	"item": [
+		{
+			"name": "Actualizar Propiedades",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"const bookSchema = {\r",
+							"    customerName:'',\r",
+							"    quantity:''\r",
+							"}\r",
+							"\r",
+							"const body = JSON.parse(pm.request.body.raw);\r",
+							"const sameSchema = JSON.stringify(Object.keys(bookSchema)) === JSON.stringify(Object.keys(body));\r",
+							"\r",
+							"pm.test(\"Same schema\",() => {\r",
+							"    pm.expect(true).to.be.eql(sameSchema);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "652d798619e265ec2483830b1312a2e4c3c3283220c4453500979ffc00c1a9b5",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n    {\r\n        \"customerName\": \"Pamela\",\r\n        \"quantity\": 11\r\n    }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/:orderId",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						":orderId"
+					],
+					"variable": [
+						{
+							"key": "orderId",
+							"value": "WmYwOlMqPnaUYW6BOat0s"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar Propiedades Datos Erroneos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validar Mensaje y Código de estado Not Found, al no encontrar Id Orden\", function () {\r",
+							"    pm.response.to.have.status(\"Not Found\");\r",
+							"    pm.expect(pm.response.text()).to.include(\"No order with id\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "652d798619e265ec2483830b1312a2e4c3c3283220c4453500979ffc00c1a9b5",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"customerName\": \"Manuela\",\r\n        \"createdBy\": \"14252290\",\r\n        \"quantity\": 11,\r\n        \"timestamp\": 10312710\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders/:orderId",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						":orderId"
+					],
+					"variable": [
+						{
+							"key": "orderId",
+							"value": "Glr4rUPEN6gvf9e6jbR0m"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar Pedido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verificar código de estado 204, Petición DELETE Exitosa\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([204]);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "652d798619e265ec2483830b1312a2e4c3c3283220c4453500979ffc00c1a9b5",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders/Glr4rUPEN6gvf9e6jbR0m",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"Glr4rUPEN6gvf9e6jbR0m"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar Pedido No existente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validar código de estado 404, en caso de no encontrar Id Orden\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([404]);\r",
+							"});\r",
+							"pm.test(\"Verficar Mensaje de error, con el Id de Orden N\", function () {\r",
+							"    q = pm.globals.get(\"ID_Order_No-Exist\");\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.error).to.eql(\"No order with id \"+q+\".\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "652d798619e265ec2483830b1312a2e4c3c3283220c4453500979ffc00c1a9b5",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders/xkyOL9XBMMWlNzuDEtgfl",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"xkyOL9XBMMWlNzuDEtgfl"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

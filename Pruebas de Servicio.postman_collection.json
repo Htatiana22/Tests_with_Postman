@@ -1,0 +1,233 @@
+{
+	"info": {
+		"_postman_id": "a5c5acf9-ff81-42c2-b327-424aa64fb216",
+		"name": "Pruebas de Servicio",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8476652"
+	},
+	"item": [
+		{
+			"name": "Apis Disponibles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rickandmortyapi.com/api",
+					"protocol": "https",
+					"host": [
+						"rickandmortyapi",
+						"com"
+					],
+					"path": [
+						"api"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener lista de Personajes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"El código de estado es 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Personaje con el name Beth Smith se encuentra en el resultado\", function() {\r",
+							"    const results = pm.response.json().results;\r",
+							"    const idPersonaje = results.find(personaje => personaje.id == \"4\");\r",
+							"    console.log(idPersonaje);\r",
+							"    pm.expect(idPersonaje.name).to.eql(\"Beth Smith\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{urlBase}}/character",
+					"host": [
+						"{{urlBase}}"
+					],
+					"path": [
+						"character"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener Personaje por Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"El código de estado es 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Mostrar un personaje por Id\", function () {\r",
+							"    pm.expect(pm.response.json().id).to.eql(parseInt(pm.environment.get('id')));\r",
+							"}); "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{urlBase}}/character/{{id}}",
+					"host": [
+						"{{urlBase}}"
+					],
+					"path": [
+						"character",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener varios Personajes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"El código de estado es 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Obtener Varios Personajes \", function () {\r",
+							"    const idsPersonajesIngresados = pm.environment.get('ids').split(',').map(Number);\r",
+							"    const idsPersonajesObtenidos = pm.response.json().map(personaje => personaje.id);\r",
+							"\r",
+							"    pm.expect(idsPersonajesIngresados.length).to.eql(idsPersonajesObtenidos.length);\r",
+							"\r",
+							"    idsPersonajesIngresados.forEach(function(idsPersonajesIngresado) {\r",
+							"        pm.expect(idsPersonajesObtenidos).to.include(idsPersonajesIngresado);\r",
+							"    })\r",
+							"}); "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{urlBase}}/character/{{ids}}",
+					"host": [
+						"{{urlBase}}"
+					],
+					"path": [
+						"character",
+						"{{ids}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Array vacio",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Debería traer un array vacío\", function () {\r",
+							"    const idsPersonajesNoExisten = pm.response.json();\r",
+							"\r",
+							"    pm.expect(idsPersonajesNoExisten).to.be.an('array').that.is.empty;\r",
+							"}); "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{urlBase}}/character/{{idsArrayVacio}}",
+					"host": [
+						"{{urlBase}}"
+					],
+					"path": [
+						"character",
+						"{{idsArrayVacio}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Paginacion de personajes por pagina",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Personajes obtenidos por página\", function () {\r",
+							"    const idsPersonajesObtenidosPorPagina = pm.response.json().results;\r",
+							"\r",
+							"    idsPersonajesObtenidosPorPagina.forEach(function (idPersonajePorPagina) {\r",
+							"        //console.log(idPersonajePorPagina);\r",
+							"        pm.expect(idsPersonajesObtenidosPorPagina).to.include(idPersonajePorPagina);\r",
+							"    })\r",
+							"}); \r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{urlBase}}/character/?page={{pages}}",
+					"host": [
+						"{{urlBase}}"
+					],
+					"path": [
+						"character",
+						""
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "{{pages}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
